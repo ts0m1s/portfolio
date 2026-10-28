@@ -16,7 +16,7 @@ const recent = posts.slice(0, 8);
 
   <section class="recent">
     <h2>Recent posts</h2>
-    <PostList posts={recent} />
+    <PostList posts={recent} showDescription />
     {posts.length > recent.length && <a class="more" href={url('writing/')}>See all {posts.length} posts</a>}
   </section>
 </Base>
