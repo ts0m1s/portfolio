@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import TagFilter from '../components/TagFilter.astro';
+import { getPosts } from '../utils';
+
+const posts = await getPosts();
+---
+
+<Base title="All posts" description="Every explainer on cybersecurity and networking, newest first.">
+  <h1>All posts</h1>
+  <TagFilter active="all" />
+  <PostList posts={posts} showDescription />
+</Base>

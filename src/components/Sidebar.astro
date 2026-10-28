@@ -1,0 +1,24 @@
+---
+import FileTree from './FileTree.astro';
+import SocialLinks from './SocialLinks.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { SITE } from '../config';
+import { url } from '../utils';
+
+const isHome = Astro.url.pathname.replace(/\/?$/, '/') === url();
+---
+
+<!--
+  Name at the top; a │ line runs down from it into the tree, which sits in the vertical middle.
+  Everything you click lives here, so the rest of the page is only for reading.
+-->
+<aside class="sidebar">
+  <a class="site-name" href={url()} aria-current={isHome ? 'page' : undefined}>{SITE.name}</a>
+  <div class="sidebar__trunk" aria-hidden="true">{Array(80).fill('│').join('\n')}</div>
+  <FileTree />
+  <div class="sidebar__spacer"></div>
+  <div class="sidebar__foot">
+    <SocialLinks />
+    <ThemeToggle id="sidebar" />
+  </div>
+</aside>

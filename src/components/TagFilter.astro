@@ -1,0 +1,30 @@
+---
+import { TAGS, type Tag } from '../config';
+import { getPosts, url } from '../utils';
+
+interface Props {
+  active: Tag | 'all';
+}
+
+const { active } = Astro.props;
+const posts = await getPosts();
+const options = [
+  { id: 'all', label: 'All', href: url('writing/'), count: posts.length },
+  ...(Object.keys(TAGS) as Tag[]).map((tag) => ({
+    id: tag,
+    label: TAGS[tag],
+    href: url(`tags/${tag}/`),
+    count: posts.filter((post) => post.data.tags.includes(tag)).length,
+  })),
+];
+---
+
+<ul class="filter" aria-label="Filter by topic">
+  {options.map(({ id, label, href, count }) => (
+    <li>
+      <a href={href} aria-current={id === active ? 'page' : undefined}>
+        {label} <span>{count}</span>
+      </a>
+    </li>
+  ))}
+</ul>

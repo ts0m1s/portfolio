@@ -1,0 +1,58 @@
+---
+import { existsSync } from 'node:fs';
+import Base from '../../layouts/Base.astro';
+import { HOMELAB } from '../../config';
+import { homelabHref, url } from '../../utils';
+
+// Full-colour icon, plus its "-light" version for dark mode when the icon set has one.
+const icon = (name?: string) =>
+  name && {
+    light: url(`icons/${name}.svg`),
+    dark: existsSync(`public/icons/${name}-light.svg`) ? url(`icons/${name}-light.svg`) : undefined,
+  };
+---
+
+<Base title="Homelab" description={HOMELAB.intro}>
+  <article class="about">
+    <header class="about__intro">
+      <h1>Homelab</h1>
+      <p class="lede">{HOMELAB.intro}</p>
+    </header>
+
+    <section>
+      <h2>What's running</h2>
+      <ul class="cards">
+        {HOMELAB.services.map(({ name, text, link, icon: iconName }) => {
+          const href = homelabHref(link);
+          const img = icon(iconName);
+          const body = (
+            <>
+              <div class="service__head">
+                {img && (
+                  <span class:list={['service__icon', { 'service__icon--themed': img.dark }]} aria-hidden="true">
+                    <img class="service__icon-light" src={img.light} alt="" width="28" height="28" />
+                    {img.dark && <img class="service__icon-dark" src={img.dark} alt="" width="28" height="28" />}
+                  </span>
+                )}
+                <h3>{name}</h3>
+              </div>
+              <p>{text}</p>
+            </>
+          );
+          return (
+            <li>
+              {href ? (
+                <a class="card-link" href={href}>
+                  {body}
+                  <span class="card-link__cue">Read the setup guide</span>
+                </a>
+              ) : (
+                body
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  </article>
+</Base>

@@ -1,0 +1,51 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Path from '../../components/Path.astro';
+import Toc from '../../components/Toc.astro';
+import { formatDate, getHomelabDocs, readingTime, url, type HomelabDoc } from '../../utils';
+
+export async function getStaticPaths() {
+  const docs = await getHomelabDocs();
+  return docs.map((doc) => ({ params: { slug: doc.id }, props: { doc } }));
+}
+
+interface Props {
+  doc: HomelabDoc;
+}
+
+const { doc } = Astro.props;
+const { title, description, updated, source } = doc.data;
+const { Content, headings } = await render(doc);
+---
+
+<Base title={title} description={description} type="article">
+  <div class="post-layout">
+    <header class="post-header">
+      <Path segments={[{ label: 'Homelab', href: url('homelab/') }]} />
+      <h1>{title}</h1>
+      <p class="post-meta">
+        {updated && <>Updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time>. </>}
+        {readingTime(doc.body)}.
+        {source && (
+          <>
+            {' '}This guide lives in <a href={source.url}>{source.repo}</a> on GitHub and updates here automatically.
+          </>
+        )}
+      </p>
+    </header>
+
+    <Toc headings={headings} />
+
+    <article class="post">
+      <div class="prose">
+        <Content />
+      </div>
+      {source && (
+        <p class="source-note">
+          <a class="button button--quiet" href={source.url}>View this guide on GitHub</a>
+        </p>
+      )}
+    </article>
+  </div>
+</Base>

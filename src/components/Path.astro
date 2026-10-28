@@ -1,0 +1,15 @@
+---
+interface Props {
+  /** Breadcrumb segments; the last one is the current page. */
+  segments: { label: string; href?: string }[];
+}
+
+const { segments } = Astro.props;
+---
+
+<!-- Where this page sits: Writing / Security -->
+<nav class="path" aria-label="Breadcrumb">
+  {segments.map(({ label, href }, i) => (
+    <>{i > 0 && <span class="path__sep" aria-hidden="true"> / </span>}{href ? <a href={href}>{label}</a> : <span aria-current="page">{label}</span>}</>
+  ))}
+</nav>

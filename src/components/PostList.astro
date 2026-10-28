@@ -1,0 +1,30 @@
+---
+import { formatDate, getPosts, url, type Post } from '../utils';
+
+interface Props {
+  posts: Post[];
+  showDescription?: boolean;
+}
+
+const { posts, showDescription = false } = Astro.props;
+
+// Posts are numbered in the order they were published, so a post keeps its number forever.
+const all = await getPosts();
+const numberOf = (post: Post) => String(all.length - all.findIndex((p) => p.id === post.id)).padStart(3, '0');
+---
+
+{posts.length === 0 ? (
+  <p class="muted">No posts here yet.</p>
+) : (
+  <ol class="log" reversed>
+    {posts.map((post) => (
+      <li class="log__row">
+        <span class="log__num">{numberOf(post)}</span>
+        <time class="log__date" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <a class="log__title" href={url(`posts/${post.id}/`)}>{post.data.title}</a>
+        <span class="log__tags">{post.data.tags.join(', ')}</span>
+        {showDescription && <p class="log__desc">{post.data.description}</p>}
+      </li>
+    ))}
+  </ol>
+)}

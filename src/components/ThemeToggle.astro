@@ -1,0 +1,83 @@
+---
+interface Props {
+  /** Unique per instance; the SVG mask needs its own id. */
+  id: string;
+}
+
+const { id } = Astro.props;
+const maskId = `theme-toggle-mask-${id}`;
+---
+
+<button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <mask id={maskId}>
+      <rect width="24" height="24" fill="#fff"></rect>
+      <circle class="theme-toggle__cut" cx="12" cy="12" r="7" fill="#000"></circle>
+    </mask>
+    <circle class="theme-toggle__core" cx="12" cy="12" r="9" fill="currentColor" mask={`url(#${maskId})`}></circle>
+    <path
+      class="theme-toggle__rays"
+      d="M12 .5v2.2M12 21.3v2.2M3.9 3.9l1.6 1.6M18.5 18.5l1.6 1.6M.5 12h2.2M21.3 12h2.2M3.9 20.1l1.6-1.6M18.5 5.5l1.6-1.6"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"></path>
+  </svg>
+</button>
+
+<script>
+  type Theme = 'light' | 'dark';
+
+  const root = document.documentElement;
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  const themeColor: Record<Theme, string> = { light: '#faf6f1', dark: '#1d1814' };
+
+  const current = (): Theme => (root.dataset.theme === 'dark' ? 'dark' : 'light');
+
+  const apply = (theme: Theme) => {
+    root.dataset.theme = theme;
+    meta?.setAttribute('content', themeColor[theme]);
+    const label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+    document.querySelectorAll('.theme-toggle').forEach((button) => button.setAttribute('aria-label', label));
+  };
+
+  apply(current());
+
+  document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      const next: Theme = current() === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('theme', next);
+      } catch {}
+
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!document.startViewTransition || reduceMotion) {
+        apply(next);
+        return;
+      }
+
+      // The new theme spreads out from the button as a growing circle.
+      const box = button.getBoundingClientRect();
+      const x = box.left + box.width / 2;
+      const y = box.top + box.height / 2;
+      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+      document
+        .startViewTransition(() => apply(next))
+        .ready.then(() => {
+          root.animate(
+            { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+            { duration: 650, easing: 'cubic-bezier(.65, 0, .35, 1)', pseudoElement: '::view-transition-new(root)' },
+          );
+        });
+    });
+  });
+
+  // Follow the OS setting until the visitor picks a theme themselves.
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+    let stored = null;
+    try {
+      stored = localStorage.getItem('theme');
+    } catch {}
+    if (!stored) apply(event.matches ? 'dark' : 'light');
+  });
+</script>

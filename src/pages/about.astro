@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { SITE, SOCIALS } from '../config';
+import { url } from '../utils';
+
+// Everything below is placeholder text. Replace it with your own details.
+
+const summary =
+  "I'm a student focused on cybersecurity and networking. I learn by building things in my homelab, and I like taking ideas that sound intimidating and making them simple, which is why I write the explainers on this site.";
+
+const focus = [
+  { title: 'Networking and homelab', text: 'Running and securing services at home: DNS filtering, VPNs and Raspberry Pi.' },
+  { title: 'Cybersecurity', text: 'Defensive security, cryptography basics and how real attacks work.' },
+  { title: 'Explaining things clearly', text: 'Turning technical topics into writing anyone can follow.' },
+];
+
+const skills = [
+  { group: 'Languages', items: ['Python', 'C++', 'JavaScript'] },
+  { group: 'Security', items: ['Wireshark', 'Nmap', 'Linux hardening'] },
+  { group: 'Homelab', items: ['Raspberry Pi', 'Pi-hole', 'Tailscale'] },
+];
+
+const experience = [
+  { when: '2025 to now', what: 'Role title', where: 'Company or project', note: 'One sentence about what you did and the result.' },
+  { when: '2024', what: 'Role title', where: 'Company or project', note: 'One sentence about what you did and the result.' },
+];
+
+const education = [
+  { when: '2023 to 2027', what: 'Degree name', where: 'University name', note: 'Relevant courses or a thesis topic.' },
+];
+
+// Put your CV in /public (e.g. public/cv.pdf) and set this to url('cv.pdf'). Leave empty to hide the button.
+const cv = '';
+
+const email = SOCIALS.find(({ name }) => name === 'email')?.url;
+---
+
+<Base title="About me" description={`About ${SITE.name}: background, skills and how to get in touch.`}>
+  <article class="about">
+    <header class="about__intro">
+      <h1>About me</h1>
+      <p class="lede">{summary}</p>
+      <div class="about__actions">
+        {email && <a class="button" href={email}>Email me</a>}
+        {cv && <a class="button button--quiet" href={cv}>Download my CV</a>}
+        <a class="button button--quiet" href={url('writing/')}>Read my writing</a>
+      </div>
+    </header>
+
+    <section>
+      <h2>What I focus on</h2>
+      <ul class="cards">
+        {focus.map(({ title, text }) => (
+          <li>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      <dl class="skills">
+        {skills.map(({ group, items }) => (
+          <div>
+            <dt>{group}</dt>
+            <dd>{items.join(', ')}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    {[
+      { heading: 'Experience', rows: experience },
+      { heading: 'Education', rows: education },
+    ].map(({ heading, rows }) => (
+      <section>
+        <h2>{heading}</h2>
+        <ol class="timeline">
+          {rows.map(({ when, what, where, note }) => (
+            <li>
+              <span class="timeline__when">{when}</span>
+              <div>
+                <p class="timeline__what">{what}, <span>{where}</span></p>
+                <p class="timeline__note">{note}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ))}
+
+    <section>
+      <h2>Get in touch</h2>
+      <p>The quickest way to reach me is by email. You can also find me here:</p>
+      <SocialLinks labels />
+    </section>
+  </article>
+</Base>

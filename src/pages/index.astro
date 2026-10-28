@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { SITE } from '../config';
+import { getPosts, url } from '../utils';
+
+const posts = await getPosts();
+const recent = posts.slice(0, 8);
+---
+
+<Base>
+  <section class="intro">
+    <h1 class="display">{SITE.tagline}</h1>
+    <p class="lede">{SITE.intro}</p>
+  </section>
+
+  <section class="recent">
+    <h2>Recent posts</h2>
+    <PostList posts={recent} />
+    {posts.length > recent.length && <a class="more" href={url('writing/')}>See all {posts.length} posts</a>}
+  </section>
+</Base>

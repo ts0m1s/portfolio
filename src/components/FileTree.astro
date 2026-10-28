@@ -1,0 +1,31 @@
+---
+import { getPosts, url } from '../utils';
+
+const posts = await getPosts();
+
+// Only the main sections. Topics and guides live inside each section's page.
+// Folders end in "/"; Writing shows how many posts it holds.
+const rows: { branch: string; name: string; href: string; count?: number; folder?: boolean; also?: string[] }[] = [
+  { branch: '├── ', name: 'Writing', href: url('writing/'), count: posts.length, folder: true, also: [url('posts/'), url('tags/')] },
+  { branch: '├── ', name: 'Homelab', href: url('homelab/'), folder: true, also: [url('homelab/')] },
+  { branch: '└── ', name: 'About me', href: url('about/') },
+];
+
+// A section is highlighted on its own page and on every page inside it.
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string, also: string[] = []) => path === href || also.some((prefix) => path.startsWith(prefix));
+---
+
+<nav class="tree" aria-label="Site">
+  <ul>
+    {rows.map(({ branch, name, href, count, folder, also }, i) => (
+      <li style={`--i: ${i}`}>
+        <a href={href} aria-current={isCurrent(href, also) ? 'page' : undefined}>
+          <span class="tree__branch" aria-hidden="true">{branch}</span>
+          <span class="tree__name">{name}{folder && <span class="tree__slash">/</span>}</span>
+          {count !== undefined && <span class="tree__count" aria-label={`${count} posts`}>{count}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

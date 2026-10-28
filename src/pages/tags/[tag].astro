@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import Path from '../../components/Path.astro';
+import PostList from '../../components/PostList.astro';
+import TagFilter from '../../components/TagFilter.astro';
+import { TAGS, type Tag } from '../../config';
+import { getPosts, url } from '../../utils';
+
+export function getStaticPaths() {
+  return Object.keys(TAGS).map((tag) => ({ params: { tag } }));
+}
+
+const tag = Astro.params.tag as Tag;
+const label = TAGS[tag];
+const posts = (await getPosts()).filter((post) => post.data.tags.includes(tag));
+---
+
+<Base title={`${label} posts`} description={`Explainers about ${label}.`}>
+  <Path segments={[{ label: 'Writing', href: url('writing/') }, { label }]} />
+  <h1>{label}</h1>
+  <TagFilter active={tag} />
+  <PostList posts={posts} showDescription />
+</Base>
