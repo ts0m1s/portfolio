@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 // - `base` must match the repo name (here: a repo called "portfolio").
 //   If the repo is named USERNAME.github.io, set base to '/'.
 export default defineConfig({
-  site: 'https://dimitrisk.github.io',
+  site: 'https://ts0m1s.github.io',
   base: '/portfolio',
   integrations: [sitemap()],
   markdown: {
