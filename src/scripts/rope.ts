@@ -49,8 +49,10 @@ const ropeFor = (element: HTMLElement): Rope => {
 };
 
 const draw = (rope: Rope) => {
-  rope.element.style.transform = `rotate(${rope.angle}rad)`;
-  rope.pull.style.transform = `translateY(${rope.stretch}px)`;
+  // At rest, leave no transform behind: a settled rope must draw exactly like a freshly loaded one.
+  const resting = !rope.angle && !rope.stretch;
+  rope.element.style.transform = resting ? '' : `rotate(${rope.angle}rad)`;
+  rope.pull.style.transform = resting ? '' : `translateY(${rope.stretch}px)`;
 };
 
 const isAtRest = (rope: Rope) =>
@@ -194,7 +196,7 @@ document.addEventListener('dragstart', (event) => {
 document.addEventListener(
   'astro:page-load',
   () => {
-    const element = document.querySelector<HTMLElement>('.rope--desktop');
+    const element = document.querySelector<HTMLElement>('.rope--desktop .rope');
     if (!element || !document.documentElement.classList.contains('intro')) return;
 
     setTimeout(() => {
@@ -202,7 +204,7 @@ document.addEventListener(
       rope.stretch = -rope.pull.offsetHeight;
       rope.angleSpeed = 0.5;
       draw(rope);
-      element.classList.add('rope--arrived');
+      element.closest('.rope-frame')?.classList.add('rope--arrived');
       settle(rope);
     }, 1500);
   },

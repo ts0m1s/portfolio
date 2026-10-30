@@ -1,6 +1,8 @@
 // Highlights the section being read in the contents list. Re-runs on every page.
 
 const wide = matchMedia('(min-width: 1280px)');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const FADE = '2.5rem';
 let cleanup = new AbortController();
 
 document.addEventListener('astro:page-load', () => {
@@ -22,7 +24,33 @@ document.addEventListener('astro:page-load', () => {
     .map((link) => document.getElementById(idOf(link)))
     .filter((el): el is HTMLElement => el !== null);
 
-  const mark = (id?: string) => links.forEach((link) => link.toggleAttribute('aria-current', idOf(link) === id));
+  const list = box.querySelector<HTMLElement>('ol');
+
+  // Fade an edge only when there are more entries past it.
+  const updateFades = () => {
+    if (!list) return;
+    const hiddenBelow = list.scrollHeight - list.clientHeight - list.scrollTop;
+    list.style.setProperty('--fade-top', list.scrollTop > 2 ? FADE : '0px');
+    list.style.setProperty('--fade-bottom', hiddenBelow > 2 ? FADE : '0px');
+  };
+
+  // Keep the current section near the middle of the list. Only the list moves, never the page.
+  const follow = (link: HTMLAnchorElement) => {
+    if (!list || !wide.matches || list.scrollHeight <= list.clientHeight) return;
+    const offset = link.getBoundingClientRect().top - list.getBoundingClientRect().top;
+    const top = list.scrollTop + offset - (list.clientHeight - link.offsetHeight) / 2;
+    list.scrollTo({ top, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  };
+
+  let currentId: string | undefined;
+
+  const mark = (id?: string) => {
+    links.forEach((link) => link.toggleAttribute('aria-current', idOf(link) === id));
+    if (id === currentId) return;
+    currentId = id;
+    const active = links.find((link) => idOf(link) === id);
+    if (active) follow(active);
+  };
 
   // A clicked entry stays highlighted until the reader scrolls on their own,
   // even if the page can't scroll far enough to bring that heading to the top.
@@ -60,4 +88,8 @@ document.addEventListener('astro:page-load', () => {
 
   setActive();
   addEventListener('scroll', setActive, { passive: true, signal });
+
+  updateFades();
+  list?.addEventListener('scroll', updateFades, { passive: true, signal });
+  addEventListener('resize', updateFades, { passive: true, signal });
 });

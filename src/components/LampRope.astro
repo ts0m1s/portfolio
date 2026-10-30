@@ -11,9 +11,11 @@ const { id, class: className } = Astro.props;
 ---
 
 <!-- A lamp pull hanging from the top of the window. Click it or drag it down to switch theme. -->
-<div class:list={['rope', className]}>
-  <div class="rope__pull">
-    <span class="rope__cord" aria-hidden="true"></span>
-    <ThemeToggle id={id} />
+<div class:list={['rope-frame', className]}>
+  <div class="rope">
+    <div class="rope__pull">
+      <span class="rope__cord" aria-hidden="true"></span>
+      <ThemeToggle id={id} />
+    </div>
   </div>
 </div>
