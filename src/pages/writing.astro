@@ -7,7 +7,11 @@ import { getPosts } from '../utils';
 const posts = await getPosts();
 ---
 
-<Base title="All posts" description="Every explainer on cybersecurity and networking, newest first.">
+<Base
+  title="All posts"
+  description="Every explainer on cybersecurity and networking, newest first."
+  path={[{ label: 'Writing' }]}
+>
   <h1>All posts</h1>
   <TagFilter active="all" />
   <PostList posts={posts} showDescription />

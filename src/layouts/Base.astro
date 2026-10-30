@@ -1,8 +1,11 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import Sidebar from '../components/Sidebar.astro';
 import MobileHeader from '../components/MobileHeader.astro';
+import Path from '../components/Path.astro';
 import Footer from '../components/Footer.astro';
+import LampRope from '../components/LampRope.astro';
 import { SITE } from '../config';
 import { url } from '../utils';
 
@@ -10,9 +13,11 @@ interface Props {
   title?: string;
   description?: string;
   type?: 'website' | 'article';
+  /** Where the page sits below /home, shown as a directory path. */
+  path?: { label: string; href?: string }[];
 }
 
-const { title, description = SITE.description, type = 'website' } = Astro.props;
+const { title, description = SITE.description, type = 'website', path } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE.name}` : SITE.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -42,6 +47,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
             document.documentElement.classList.add('intro');
             sessionStorage.setItem('intro', '1');
           }
+          // Hide the name until it starts decrypting, so it never flashes as plain text.
+          if (!sessionStorage.getItem('decrypted') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('decrypt');
+          }
         } catch {}
       })();
     </script>
@@ -63,14 +72,31 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap"
     />
+    <ClientRouter fallback="swap" />
+    <script>
+      import '../scripts/theme';
+      import '../scripts/rope';
+      import '../scripts/mobile-menu';
+      import '../scripts/toc';
+      import '../scripts/sidebar-marker';
+      import '../scripts/path-typer';
+      import '../scripts/decrypt';
+      import '../scripts/code-copy';
+      import '../scripts/image-zoom';
+      import '../scripts/reading-progress';
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <MobileHeader />
+    <div transition:persist="rope">
+      <LampRope id="desktop" class="rope--desktop" />
+    </div>
     <div class="layout">
       <Sidebar />
       <div class="content">
         <main id="main">
+          <Path segments={path} />
           <slot />
         </main>
         <Footer />

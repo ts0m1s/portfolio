@@ -11,6 +11,8 @@
   --muted: #74695f;
   --rule: #e3dacf;
   --accent: #8b5e3c;
+  --brand-linkedin: #0a66c2;
+  --brand-email: #6d4aff;
   --phosphor: #5b7550;
   --select: rgb(139 94 60 / 0.12);
   --shadow: rgb(44 36 33 / 0.3);
@@ -20,9 +22,15 @@
 
   --line: color-mix(in srgb, var(--muted) 45%, transparent);
 
+  --top: 3rem; /* where the name and the first line of content start */
   --gutter: 20px;
-  --measure: 41rem; /* reading width */
-  --wide: 48rem; /* home, lists */
+  --sidebar: 13rem;
+  --sidebar-gap: 5.5rem;
+  --measure: 34rem; /* reading width */
+  --toc: 12rem;
+  --toc-gap: 2.5rem;
+  /* Sidebar and content sit together, centred in the window, at the same width on every page. */
+  --page: calc(var(--sidebar) + var(--sidebar-gap) + var(--measure) + var(--toc-gap) + var(--toc));
 
   color-scheme: light;
 }
@@ -34,6 +42,8 @@
   --muted: #a0937f;
   --rule: #352c25;
   --accent: #d8a574;
+  --brand-linkedin: #70b5f9;
+  --brand-email: #a08bff;
   --phosphor: #a8c38c;
   --select: rgb(216 165 116 / 0.14);
   --shadow: rgb(0 0 0 / 0.55);
@@ -49,6 +59,8 @@
     --muted: #a0937f;
     --rule: #352c25;
     --accent: #d8a574;
+    --brand-linkedin: #70b5f9;
+    --brand-email: #a08bff;
     --phosphor: #a8c38c;
     --select: rgb(216 165 116 / 0.14);
     --shadow: rgb(0 0 0 / 0.55);
@@ -62,11 +74,71 @@
   }
 }
 
-/* Theme switch: the circular reveal is driven from ThemeToggle.astro. */
+/* Page transitions: the new page fades in over the old one; the sidebar stays still. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: none;
   mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation: page-in 0.26s ease both;
+}
+
+::view-transition-old(sidebar) {
+  display: none;
+}
+
+::view-transition-new(sidebar) {
+  animation: none;
+}
+
+::view-transition-group(sidebar) {
+  animation: none;
+}
+
+::view-transition-old(path),
+::view-transition-old(rope) {
+  display: none;
+}
+
+::view-transition-new(path),
+::view-transition-group(path),
+::view-transition-new(rope),
+::view-transition-group(rope) {
+  animation: none;
+}
+
+.sidebar {
+  view-transition-name: sidebar;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* Theme switch: the circular reveal is driven from scripts/theme.ts, over the whole page. */
+.theme-switching::view-transition-new(root) {
+  animation: none;
+}
+
+.theme-switching .sidebar,
+.theme-switching .path {
+  view-transition-name: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 *,
@@ -75,8 +147,11 @@
   box-sizing: border-box;
 }
 
+/* One base size for the whole site, growing with the window. Almost everything is in rem,
+   so text, spacing and columns all scale together. */
 html {
   -webkit-text-size-adjust: 100%;
+  font-size: clamp(106.25%, 78% + 0.4vw, 130%);
 }
 
 body {
@@ -84,7 +159,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
-  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  font-size: 1rem;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
@@ -143,29 +218,14 @@ html.menu-open {
   padding: 2rem var(--gutter);
 }
 
-main,
-.site-footer {
-  max-width: var(--wide);
-  margin-inline: auto;
-}
-
-/* Posts are wider: article plus the contents column. */
-main:has(.post-layout),
-.content:has(.post-layout) .site-footer {
-  max-width: none;
-}
-
-.post-layout {
-  margin-inline: auto;
-}
-
 @media (min-width: 900px) {
   .layout {
-    position: relative;
     display: grid;
-    grid-template-columns: 16rem minmax(0, 1fr);
-    max-width: 88rem;
+    grid-template-columns: var(--sidebar) minmax(0, 1fr);
+    column-gap: var(--sidebar-gap);
+    max-width: calc(var(--page) + 2 * var(--gutter));
     margin-inline: auto;
+    padding-inline: var(--gutter);
   }
 
   .sidebar {
@@ -176,7 +236,10 @@ main:has(.post-layout),
     height: 100vh;
     min-height: 30rem;
     overflow-y: auto;
-    padding: 3rem 1.5rem 2.5rem 2.5rem;
+    /* The sidebar can scroll on short windows, which clips anything past its edges. This
+       extra room, cancelled out by the margin, keeps the icons whole when they grow on hover. */
+    margin-inline: -0.75rem;
+    padding: var(--top) 0.75rem 2.5rem;
   }
 
   .sidebar .site-name {
@@ -208,7 +271,6 @@ main:has(.post-layout),
   .sidebar__foot {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 1rem;
   }
 
@@ -217,7 +279,7 @@ main:has(.post-layout),
   }
 
   .content {
-    padding: 5rem clamp(2rem, 6vw, 6rem) 2.5rem;
+    padding: var(--top) 0 2.5rem;
   }
 }
 
@@ -292,8 +354,7 @@ main:has(.post-layout),
 }
 
 .tree__count {
-  margin-left: auto;
-  padding-left: 1rem;
+  margin-left: 0.5em;
   color: var(--muted);
   font-size: 0.8em;
   font-weight: 400;
@@ -386,22 +447,40 @@ html.intro .sidebar__foot {
   flex-wrap: wrap;
   gap: 0.25rem;
   list-style: none;
-  margin: 0 0 0 -7px;
+  margin: 0 0 0 -0.45rem; /* lines the first icon up with your name */
   padding: 0;
 }
 
 .icons a {
+  --brand: var(--ink);
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 2.2rem;
+  height: 2.2rem;
   color: var(--muted);
 }
 
-.icons a:hover {
-  background: var(--select);
-  color: var(--accent);
+/* Each icon lights up in its own colour. GitHub's logo has none, so it just brightens. */
+.icons a[data-icon='linkedin'] {
+  --brand: var(--brand-linkedin);
+}
+
+.icons a[data-icon='email'] {
+  --brand: var(--brand-email);
+}
+
+.icons svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.icons a:hover svg,
+.icons a:focus-visible svg {
+  color: var(--brand);
+  transform: scale(1.12);
 }
 
 .icons--labels {
@@ -424,30 +503,90 @@ html.intro .sidebar__foot {
 }
 
 .icons--labels a:hover {
-  border-color: var(--accent);
-  background: none;
+  border-color: var(--brand);
 }
 
-.icons svg {
-  width: 17px;
-  height: 17px;
+.icons--labels svg {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
-/* ---------- Theme toggle ---------- */
+/* ---------- Lamp rope ----------
+   Hangs from the top of the window and stays in reach while scrolling. Keeps its own
+   view transition name, so it stays visible and moving during the theme reveal. */
+
+.rope {
+  view-transition-name: rope;
+  position: fixed;
+  top: 0;
+  z-index: 30;
+  transform-origin: top center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rope--desktop {
+  display: none;
+  /* In the window's right margin, just outside the content. */
+  right: max(0.2rem, calc((100vw - var(--page)) / 2 - 3.25rem));
+}
+
+@media (min-width: 900px) {
+  .rope--desktop {
+    display: block;
+  }
+}
+
+/* Phones: short, beside Menu, and scrolls away with the top bar. */
+.rope--phone {
+  position: absolute;
+  right: calc(var(--gutter) + 4.75rem);
+}
+
+.rope--phone .rope__pull {
+  padding-top: 0.9rem;
+}
+
+.rope__pull {
+  position: relative;
+  padding-top: 5rem;
+}
+
+.rope__cord {
+  position: absolute;
+  top: -5rem; /* runs past the top of the window, so pulling never shows its end */
+  bottom: 1.9rem;
+  left: 50%;
+  width: 1.5px;
+  margin-left: -0.75px;
+  background: var(--muted);
+}
+
+/* The rope's movement is simulated in scripts/rope.ts. On a new visit it waits above the
+   window until the sidebar has unfolded. */
+html.intro .rope--desktop:not(.rope--arrived) .rope__pull {
+  transform: translateY(-100%);
+}
 
 .theme-toggle {
+  position: relative;
   display: grid;
   place-items: center;
   flex: none;
-  width: 36px;
-  height: 36px;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
   border: 1px solid var(--rule);
-  border-radius: 8px;
+  border-radius: 50%;
   background: var(--paper);
   color: var(--ink);
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
   transition: border-color 0.2s, color 0.2s;
+}
+
+.theme-toggle:active {
+  cursor: grabbing;
 }
 
 .theme-toggle:hover {
@@ -501,14 +640,16 @@ html.intro .sidebar__foot {
 /* ---------- Mobile header + menu ---------- */
 
 .mobile-header {
+  position: relative;
   align-items: center;
   padding: 1.25rem var(--gutter) 0;
 }
 
 .mobile-header__actions {
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 0.5rem;
+  padding-left: 2.5rem;
 }
 
 .menu-button {
@@ -571,7 +712,7 @@ h4 {
 }
 
 h1 {
-  font-size: clamp(1.75rem, 1.35rem + 1.5vw, 2.4rem);
+  font-size: clamp(1.6rem, 1.35rem + 0.6vw, 1.8rem);
   letter-spacing: -0.035em;
   margin: 0 0 1rem;
 }
@@ -601,16 +742,17 @@ table {
 }
 
 .display {
-  max-width: 21ch;
-  margin-bottom: 1.5rem;
-  font-size: clamp(2.1rem, 1.3rem + 3vw, 3.4rem);
-  line-height: 1.08;
-  letter-spacing: -0.045em;
+  max-width: 30ch;
+  margin-bottom: 1.25rem;
+  font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
 }
 
 .lede {
   max-width: 34em;
-  font-size: 1.12em;
+  font-size: 1.05em;
 }
 
 .recent h2 {
@@ -731,14 +873,35 @@ table {
   opacity: 0.65;
 }
 
-/* ---------- Breadcrumb path ---------- */
+/* ---------- Directory path ---------- */
 
 .path {
-  margin-bottom: 1.25rem;
+  /* Stays still during page changes while scripts/path-typer.ts edits it. */
+  view-transition-name: path;
+  min-height: 1.7em;
+  margin-bottom: 2.25rem;
   font-family: var(--mono);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--muted);
   overflow-wrap: anywhere;
+}
+
+.path__segment[hidden] {
+  display: none;
+}
+
+.path__typing {
+  color: var(--ink);
+}
+
+.path__typing::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.18em;
+  background: var(--phosphor);
 }
 
 .path a {
@@ -761,7 +924,6 @@ table {
 
 /* ---------- Article + contents ---------- */
 
-.post-layout,
 .post {
   max-width: var(--measure);
 }
@@ -779,7 +941,7 @@ table {
 .toc {
   margin-bottom: 2.5rem;
   font-family: var(--mono);
-  font-size: 0.95rem;
+  font-size: 0.8rem;
   line-height: 1.45;
 }
 
@@ -828,18 +990,12 @@ table {
 @media (min-width: 1280px) {
   .post-layout {
     display: grid;
-    grid-template-columns: minmax(0, var(--measure)) 16rem;
+    grid-template-columns: minmax(0, var(--measure)) var(--toc);
     grid-template-areas:
       'head .'
       'post toc';
-    column-gap: 4rem;
+    column-gap: var(--toc-gap);
     justify-content: space-between;
-    max-width: none;
-  }
-
-  /* Let the contents column reach the right edge, under the theme toggle. */
-  .content:has(.post-layout) {
-    padding-right: 2.5rem;
   }
 
   .post-header {
@@ -1124,10 +1280,6 @@ pre[data-language='text']::before {
 
 /* ---------- About ---------- */
 
-.about {
-  max-width: 44rem;
-}
-
 .about section {
   margin-top: 3.5rem;
 }
@@ -1255,6 +1407,199 @@ pre[data-language='text']::before {
   .skills div,
   .timeline li {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Decrypting name ---------- */
+
+/* Kept hidden until scripts/decrypt.ts starts; the fallback reveals it if the script never runs. */
+html.decrypt .site-name {
+  visibility: hidden;
+  animation: decrypt-fallback 0s 2s forwards;
+}
+
+.decrypt-word {
+  white-space: nowrap;
+}
+
+.decrypt-letter {
+  display: inline-block;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+@keyframes decrypt-fallback {
+  to {
+    visibility: visible;
+  }
+}
+
+/* ---------- Sidebar marker ---------- */
+
+.tree-wrap {
+  position: relative;
+}
+
+.tree__marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.5em;
+  height: 1.05em;
+  background: var(--phosphor);
+  font-size: 0.875rem;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0.25s ease;
+}
+
+.tree__marker--on {
+  opacity: 1;
+  animation: blink 1.1s steps(1) 0.6s infinite;
+}
+
+html.intro .tree__marker--on {
+  animation:
+    fade-in 0.4s ease 1.2s backwards,
+    blink 1.1s steps(1) 1.6s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tree__marker {
+    transition: none;
+  }
+
+  .tree__marker--on {
+    animation: none;
+  }
+}
+
+/* ---------- Reading touches ---------- */
+
+.reading-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.code-block {
+  position: relative;
+  margin-bottom: 1.25em;
+}
+
+.code-block pre {
+  margin-bottom: 0;
+}
+
+.code-copy {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.code-block:hover .code-copy,
+.code-copy:focus-visible,
+.code-copy--done {
+  opacity: 1;
+}
+
+.code-copy:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.code-copy--done {
+  color: var(--phosphor);
+}
+
+/* The language label would sit under the button. */
+.code-block:hover pre::before {
+  opacity: 0;
+}
+
+/* No hover on touch screens: keep the button visible and drop the label. */
+@media (hover: none) {
+  .code-copy {
+    opacity: 1;
+  }
+
+  .code-block pre::before {
+    content: none;
+  }
+}
+
+.prose img {
+  cursor: zoom-in;
+}
+
+.prose a img {
+  cursor: pointer;
+}
+
+.zoom {
+  max-width: none;
+  max-height: none;
+  width: 100vw;
+  height: 100dvh;
+  margin: 0;
+  padding: 2rem;
+  border: 0;
+  background: transparent;
+  cursor: zoom-out;
+}
+
+.zoom[open] {
+  display: grid;
+  place-items: center;
+}
+
+.zoom img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  object-fit: contain;
+  animation: zoom-in 0.22s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.zoom::backdrop {
+  background: rgb(0 0 0 / 0.8);
+  animation: fade-in 0.2s ease both;
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoom img,
+  .zoom::backdrop {
+    animation: none;
   }
 }
 

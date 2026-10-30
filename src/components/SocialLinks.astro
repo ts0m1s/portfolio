@@ -25,6 +25,8 @@ const icons: Record<string, string> = {
     <li>
       <a
         href={href}
+        data-icon={name}
+        target={href.startsWith('http') ? '_blank' : undefined}
         rel={href.startsWith('http') ? 'me noopener' : undefined}
         aria-label={labels ? undefined : names[name] ?? name}
         title={labels ? undefined : names[name] ?? name}

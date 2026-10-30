@@ -1,7 +1,6 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import Path from '../../components/Path.astro';
 import Toc from '../../components/Toc.astro';
 import { formatDate, getHomelabDocs, readingTime, url, type HomelabDoc } from '../../utils';
 
@@ -19,10 +18,14 @@ const { title, description, updated, source } = doc.data;
 const { Content, headings } = await render(doc);
 ---
 
-<Base title={title} description={description} type="article">
+<Base
+  title={title}
+  description={description}
+  type="article"
+  path={[{ label: 'Homelab', href: url('homelab/') }, { label: doc.id }]}
+>
   <div class="post-layout">
     <header class="post-header">
-      <Path segments={[{ label: 'Homelab', href: url('homelab/') }]} />
       <h1>{title}</h1>
       <p class="post-meta">
         {updated && <>Updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time>. </>}

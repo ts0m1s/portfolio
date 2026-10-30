@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Path from '../../components/Path.astro';
 import PostList from '../../components/PostList.astro';
 import TagFilter from '../../components/TagFilter.astro';
 import { TAGS, type Tag } from '../../config';
@@ -15,8 +14,11 @@ const label = TAGS[tag];
 const posts = (await getPosts()).filter((post) => post.data.tags.includes(tag));
 ---
 
-<Base title={`${label} posts`} description={`Explainers about ${label}.`}>
-  <Path segments={[{ label: 'Writing', href: url('writing/') }, { label }]} />
+<Base
+  title={`${label} posts`}
+  description={`Explainers about ${label}.`}
+  path={[{ label: 'Writing', href: url('writing/') }, { label }]}
+>
   <h1>{label}</h1>
   <TagFilter active={tag} />
   <PostList posts={posts} showDescription />

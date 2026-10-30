@@ -10,6 +10,8 @@ export default defineConfig({
   site: 'https://ts0m1s.github.io',
   base: '/portfolio',
   integrations: [sitemap()],
+  // Load pages on hover so transitions feel instant.
+  prefetch: { prefetchAll: true },
   markdown: {
     shikiConfig: {
       themes: { light: 'vitesse-light', dark: 'vitesse-dark' },

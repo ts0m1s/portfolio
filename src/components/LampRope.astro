@@ -1,0 +1,19 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  /** Unique per instance; passed to the toggle's SVG mask. */
+  id: string;
+  class?: string;
+}
+
+const { id, class: className } = Astro.props;
+---
+
+<!-- A lamp pull hanging from the top of the window. Click it or drag it down to switch theme. -->
+<div class:list={['rope', className]}>
+  <div class="rope__pull">
+    <span class="rope__cord" aria-hidden="true"></span>
+    <ThemeToggle id={id} />
+  </div>
+</div>

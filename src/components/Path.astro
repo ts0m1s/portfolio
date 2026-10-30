@@ -1,15 +1,21 @@
 ---
+import { url } from '../utils';
+
 interface Props {
-  /** Breadcrumb segments; the last one is the current page. */
-  segments: { label: string; href?: string }[];
+  /** Where the page sits below /home. The last segment is the current page. */
+  segments?: { label: string; href?: string }[];
 }
 
-const { segments } = Astro.props;
+const { segments = [] } = Astro.props;
+const all = [{ label: 'home', href: url() }, ...segments];
 ---
 
-<!-- Where this page sits: Writing / Security -->
-<nav class="path" aria-label="Breadcrumb">
-  {segments.map(({ label, href }, i) => (
-    <>{i > 0 && <span class="path__sep" aria-hidden="true"> / </span>}{href ? <a href={href}>{label}</a> : <span aria-current="page">{label}</span>}</>
+<!-- The page's location, written like a directory. Changing page types it like `cd` (scripts/path-typer.ts). -->
+<nav class="path" aria-label="You are here">
+  {all.map(({ label, href }, i) => (
+    <span class="path__segment" data-segment={label}>
+      <span class="path__sep" aria-hidden="true">/</span>
+      {i === all.length - 1 ? <span aria-current="page">{label}</span> : <a href={href}>{label}</a>}
+    </span>
   ))}
 </nav>

@@ -1,7 +1,6 @@
 ---
 import type { MarkdownHeading } from 'astro';
 import Base from './Base.astro';
-import Path from '../components/Path.astro';
 import Toc from '../components/Toc.astro';
 import { TAGS } from '../config';
 import { formatDate, readingTime, url, type Post } from '../utils';
@@ -17,15 +16,14 @@ const { post, headings, newer, older } = Astro.props;
 const { title, description, date, updated, tags } = post.data;
 ---
 
-<Base title={title} description={description} type="article">
+<Base
+  title={title}
+  description={description}
+  type="article"
+  path={[{ label: 'Writing', href: url('writing/') }, { label: post.id }]}
+>
   <div class="post-layout">
     <header class="post-header">
-      <Path
-        segments={[
-          { label: 'Writing', href: url('writing/') },
-          ...(tags[0] ? [{ label: TAGS[tags[0]], href: url(`tags/${tags[0]}/`) }] : []),
-        ]}
-      />
       <h1>{title}</h1>
       <p class="post-meta">
         Posted <time datetime={date.toISOString()}>{formatDate(date)}</time>

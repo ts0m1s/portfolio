@@ -8,7 +8,7 @@ const { id } = Astro.props;
 const maskId = `theme-toggle-mask-${id}`;
 ---
 
-<button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme">
+<button class="theme-toggle" type="button" aria-label="Turn the lights off" title="Pull me">
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <mask id={maskId}>
       <rect width="24" height="24" fill="#fff"></rect>
@@ -23,61 +23,3 @@ const maskId = `theme-toggle-mask-${id}`;
       stroke-linecap="round"></path>
   </svg>
 </button>
-
-<script>
-  type Theme = 'light' | 'dark';
-
-  const root = document.documentElement;
-  const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-  const themeColor: Record<Theme, string> = { light: '#faf6f1', dark: '#1d1814' };
-
-  const current = (): Theme => (root.dataset.theme === 'dark' ? 'dark' : 'light');
-
-  const apply = (theme: Theme) => {
-    root.dataset.theme = theme;
-    meta?.setAttribute('content', themeColor[theme]);
-    const label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
-    document.querySelectorAll('.theme-toggle').forEach((button) => button.setAttribute('aria-label', label));
-  };
-
-  apply(current());
-
-  document.querySelectorAll<HTMLButtonElement>('.theme-toggle').forEach((button) => {
-    button.addEventListener('click', () => {
-      const next: Theme = current() === 'dark' ? 'light' : 'dark';
-      try {
-        localStorage.setItem('theme', next);
-      } catch {}
-
-      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!document.startViewTransition || reduceMotion) {
-        apply(next);
-        return;
-      }
-
-      // The new theme spreads out from the button as a growing circle.
-      const box = button.getBoundingClientRect();
-      const x = box.left + box.width / 2;
-      const y = box.top + box.height / 2;
-      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
-
-      document
-        .startViewTransition(() => apply(next))
-        .ready.then(() => {
-          root.animate(
-            { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-            { duration: 650, easing: 'cubic-bezier(.65, 0, .35, 1)', pseudoElement: '::view-transition-new(root)' },
-          );
-        });
-    });
-  });
-
-  // Follow the OS setting until the visitor picks a theme themselves.
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-    let stored = null;
-    try {
-      stored = localStorage.getItem('theme');
-    } catch {}
-    if (!stored) apply(event.matches ? 'dark' : 'light');
-  });
-</script>

@@ -1,7 +1,7 @@
 ---
 import FileTree from './FileTree.astro';
 import SocialLinks from './SocialLinks.astro';
-import ThemeToggle from './ThemeToggle.astro';
+import LampRope from './LampRope.astro';
 import { SITE } from '../config';
 import { url } from '../utils';
 ---
@@ -10,7 +10,7 @@ import { url } from '../utils';
 <header class="mobile-header">
   <a class="site-name" href={url()}>{SITE.name}</a>
   <div class="mobile-header__actions">
-    <ThemeToggle id="mobile" />
+    <LampRope id="mobile" class="rope--phone" />
     <button class="menu-button" type="button" aria-controls="mobile-menu" aria-expanded="false">Menu</button>
   </div>
 </header>
@@ -23,26 +23,3 @@ import { url } from '../utils';
   <FileTree />
   <SocialLinks />
 </div>
-
-<script>
-  const menu = document.getElementById('mobile-menu')!;
-  const openButton = document.querySelector<HTMLButtonElement>('.mobile-header .menu-button')!;
-  const closeButton = menu.querySelector<HTMLButtonElement>('[data-close]')!;
-
-  const setOpen = (open: boolean) => {
-    menu.hidden = !open;
-    openButton.setAttribute('aria-expanded', String(open));
-    document.documentElement.classList.toggle('menu-open', open);
-    (open ? closeButton : openButton).focus();
-  };
-
-  openButton.addEventListener('click', () => setOpen(true));
-  closeButton.addEventListener('click', () => setOpen(false));
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !menu.hidden) setOpen(false);
-  });
-  // Close if the window is widened past the sidebar breakpoint while open.
-  matchMedia('(min-width: 900px)').addEventListener('change', (event) => {
-    if (event.matches && !menu.hidden) setOpen(false);
-  });
-</script>
