@@ -1,53 +1,89 @@
 ---
-import { existsSync } from 'node:fs';
 import Base from '../../layouts/Base.astro';
+import ExternalIcon from '../../components/ExternalIcon.astro';
+import GlobeIcon from '../../components/GlobeIcon.astro';
+import ServiceIcon from '../../components/ServiceIcon.astro';
 import { HOMELAB } from '../../config';
-import { homelabHref, url } from '../../utils';
-
-// Full-colour icon, plus its "-light" version for dark mode when the icon set has one.
-const icon = (name?: string) =>
-  name && {
-    light: url(`icons/${name}.svg`),
-    dark: existsSync(`public/icons/${name}-light.svg`) ? url(`icons/${name}-light.svg`) : undefined,
-  };
+import { edit, editItem, editList } from '../../edit/attrs';
+import { homelabHref } from '../../utils';
 ---
 
-<Base title="Homelab" description={HOMELAB.intro} path={[{ label: 'Homelab' }]}>
+<Base title={HOMELAB.title} description={HOMELAB.intro} path={[{ label: 'Homelab' }]}>
   <article class="about">
     <header class="about__intro">
-      <h1>Homelab</h1>
-      <p class="lede">{HOMELAB.intro}</p>
+      <h1 {...edit('homelab.title')}>{HOMELAB.title}</h1>
+      <p class="lede" {...edit('homelab.intro')}>{HOMELAB.intro}</p>
     </header>
 
     <section>
-      <h2>What's running</h2>
-      <ul class="cards">
-        {HOMELAB.services.map(({ name, text, link, icon: iconName }) => {
+      <h2 {...edit('homelab.servicesHeading')}>{HOMELAB.servicesHeading}</h2>
+      <ul class="cards cards--pairs" {...editList('homelab.services', { name: 'New service', text: 'What it does.' })}>
+        {HOMELAB.services.map(({ name, text, link, icon, url, groups }, i) => {
           const href = homelabHref(link);
-          const img = icon(iconName);
+          const where = (site: string, what: string) => `${what} ${site.includes('github.com') ? 'on GitHub' : 'website'}`;
+          const at = `homelab.services.${i}`;
           const body = (
             <>
               <div class="service__head">
-                {img && (
-                  <span class:list={['service__icon', { 'service__icon--themed': img.dark }]} aria-hidden="true">
-                    <img class="service__icon-light" src={img.light} alt="" width="28" height="28" />
-                    {img.dark && <img class="service__icon-dark" src={img.dark} alt="" width="28" height="28" />}
-                  </span>
-                )}
-                <h3>{name}</h3>
+                <ServiceIcon name={icon} />
+                <h3 {...edit(`${at}.name`)}>{name}</h3>
               </div>
-              <p>{text}</p>
+              <p {...edit(`${at}.text`)}>{text}</p>
+              {groups && (
+                <div class="groups" {...editList(`${at}.groups`, { name: 'New section', apps: [] })}>
+                  {groups.map((group, g) => (
+                    <section class="group" {...editItem(g)}>
+                      <h4 class="group__name" {...edit(`${at}.groups.${g}.name`)}>{group.name}</h4>
+                      <ul class="apps" {...editList(`${at}.groups.${g}.apps`, { name: 'App', role: 'what it does', url: '' })}>
+                        {group.apps.map((app, j) => {
+                          const path = `${at}.groups.${g}.apps.${j}`;
+                          const content = (
+                            <>
+                              <ServiceIcon name={app.icon} />
+                              <span class="app__name">
+                                <span {...edit(`${path}.name`)}>{app.name}</span>
+                                {app.url && <ExternalIcon />}
+                              </span>
+                              <span class="app__role" {...edit(`${path}.role`)}>{app.role}</span>
+                            </>
+                          );
+                          return (
+                            <li {...editItem(j)}>
+                              {app.url ? (
+                                <a class="app" href={app.url} target="_blank" rel="noopener" title={where(app.url, app.name)}>
+                                  {content}
+                                </a>
+                              ) : (
+                                <span class="app">{content}</span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </section>
+                  ))}
+                </div>
+              )}
             </>
           );
           return (
-            <li>
-              {href ? (
-                <a class="card-link" href={href}>
-                  {body}
-                  <span class="card-link__cue">Read the setup guide</span>
-                </a>
-              ) : (
-                body
+            <li class:list={[{ cards__wide: groups }]} {...editItem(i)}>
+              {body}
+              {(href || url) && (
+                <div class="card-actions">
+                  {href && (
+                    <a class="card-action" href={href}>
+                      <span {...edit('homelab.cardCue')}>{HOMELAB.cardCue}</span>
+                    </a>
+                  )}
+                  {url && (
+                    <a class="card-action" href={url} target="_blank" rel="noopener" title={where(url, name)}>
+                      <GlobeIcon />
+                      <span {...edit('homelab.websiteLabel')}>{HOMELAB.websiteLabel}</span>
+                      <ExternalIcon />
+                    </a>
+                  )}
+                </div>
               )}
             </li>
           );

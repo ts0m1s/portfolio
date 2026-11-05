@@ -1,0 +1,33 @@
+---
+import { existsSync } from 'node:fs';
+import { url } from '../utils';
+
+interface Props {
+  /** File name in public/icons/, without .svg. */
+  name?: string;
+}
+
+// Full-colour icon, plus its "-light" version for dark mode when the icon set has one.
+// "server" is a built-in line icon (Lucide, ISC licence) for cards about a machine rather than an app.
+const { name } = Astro.props;
+const builtIn = name === 'server';
+const light = name && !builtIn && url(`icons/${name}.svg`);
+const dark = name && existsSync(`public/icons/${name}-light.svg`) ? url(`icons/${name}-light.svg`) : undefined;
+---
+
+{builtIn && (
+  <span class="service__icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect>
+      <rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect>
+      <line x1="6" x2="6.01" y1="6" y2="6"></line>
+      <line x1="6" x2="6.01" y1="18" y2="18"></line>
+    </svg>
+  </span>
+)}
+{light && (
+  <span class:list={['service__icon', { 'service__icon--themed': dark }]} aria-hidden="true">
+    <img class="service__icon-light" src={light} alt="" width="28" height="28" />
+    {dark && <img class="service__icon-dark" src={dark} alt="" width="28" height="28" />}
+  </span>
+)}

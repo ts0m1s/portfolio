@@ -1,6 +1,7 @@
 ---
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import ExternalIcon from '../../components/ExternalIcon.astro';
 import Toc from '../../components/Toc.astro';
 import { formatDate, getHomelabDocs, readingTime, url, type HomelabDoc } from '../../utils';
 
@@ -46,7 +47,7 @@ const { Content, headings } = await render(doc);
       </div>
       {source && (
         <p class="source-note">
-          <a class="button button--quiet" href={source.url}>View this guide on GitHub</a>
+          <a class="button button--quiet" href={source.url} target="_blank" rel="noopener">View this guide on GitHub <ExternalIcon /></a>
         </p>
       )}
     </article>
