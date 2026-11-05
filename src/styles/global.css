@@ -243,6 +243,7 @@ html.menu-open {
   }
 
   .sidebar .site-name {
+    align-self: flex-start; /* hover area fits the name, not the whole sidebar */
     padding-bottom: 0.75rem;
   }
 
@@ -320,7 +321,8 @@ html.menu-open {
 }
 
 .tree a {
-  display: flex;
+  /* Only as wide as its text, so the hover doesn't start out in the empty space. */
+  display: inline-flex;
   align-items: baseline;
   padding-block: 0.12rem;
   color: var(--ink);
@@ -330,11 +332,6 @@ html.menu-open {
 
 .tree a:hover {
   color: var(--accent);
-}
-
-.tree a:hover .tree__name {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
 }
 
 .tree a[aria-current='page'] {
@@ -472,15 +469,12 @@ html.intro .sidebar__foot {
 .icons svg {
   width: 1.3rem;
   height: 1.3rem;
-  transition:
-    color 0.18s ease,
-    transform 0.18s ease;
+  transition: color 0.15s ease;
 }
 
 .icons a:hover svg,
 .icons a:focus-visible svg {
   color: var(--brand);
-  transform: scale(1.12);
 }
 
 .icons--labels {
@@ -706,6 +700,8 @@ html.intro .rope--desktop:not(.rope--arrived) .rope__pull {
 }
 
 .mobile-menu .tree a {
+  /* Full-width rows are easier to tap on a phone. */
+  display: flex;
   padding-block: 0.4rem;
 }
 
@@ -754,7 +750,142 @@ table {
 /* ---------- Home ---------- */
 
 .intro {
-  margin-bottom: 4.5rem;
+  margin-bottom: 2.75rem;
+}
+
+/* ---------- Home: "now" block and homelab strip ---------- */
+
+.now {
+  margin-bottom: 2.25rem;
+  font-family: var(--mono);
+  font-size: 0.88rem;
+}
+
+.now__cmd {
+  margin: 0 0 0.35rem;
+  color: var(--ink);
+}
+
+/* The cursor that follows the command while it's being typed. */
+.term__typed.is-typing::after {
+  content: '';
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: -0.18em;
+  background: var(--phosphor);
+}
+
+/* Before the session plays, its lines are hidden (still taking up their space, so nothing
+   jumps). If the script never runs, they appear on their own after a moment. */
+html.term .term [data-step] {
+  visibility: hidden;
+  animation: term-fallback 0s 5s forwards;
+}
+
+html.term .term [data-step].is-shown {
+  visibility: visible;
+  animation: none;
+}
+
+@keyframes term-fallback {
+  to {
+    visibility: visible;
+  }
+}
+
+
+
+.now__sign {
+  color: var(--phosphor);
+  font-weight: 600;
+}
+
+.now__list {
+  margin: 0;
+}
+
+.now__row {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  column-gap: 1rem;
+  padding: 0.15rem 0;
+}
+
+.now__row dt {
+  color: var(--muted);
+}
+
+.now__row dd {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.05em;
+}
+
+.lab-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 4rem;
+  padding: 0.9rem 0;
+  border-block: 1px solid var(--rule);
+}
+
+.lab-strip__label {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.lab-strip__icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lab-strip__icons .service__icon,
+.lab-strip__icons .service__icon img {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.lab-strip__link {
+  margin-left: auto;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.lab-strip__link:hover,
+.lab-strip__link:focus-visible {
+  color: var(--accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .now__row {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+  }
+
+  .lab-strip__link {
+    margin-left: 0;
+  }
 }
 
 .display {
@@ -816,7 +947,6 @@ table {
 
 .log__title:hover {
   color: var(--accent);
-  text-decoration: underline;
 }
 
 .log__desc {
@@ -927,7 +1057,6 @@ table {
 
 .path a:hover {
   color: var(--accent);
-  text-decoration: underline;
 }
 
 .path__sep {
@@ -1220,7 +1349,6 @@ pre[data-language='text']::before {
 
 .post-nav a:hover span {
   color: var(--accent);
-  text-decoration: underline;
 }
 
 .post-nav__newer {
@@ -1261,6 +1389,25 @@ pre[data-language='text']::before {
   height: 1.75rem;
 }
 
+/* Icons come in different proportions; each one fits the same square, so every title lines up. */
+.service__icon img {
+  object-fit: contain;
+}
+
+.service__icon svg {
+  width: 100%;
+  height: 100%;
+  color: var(--ink);
+}
+
+.service__head {
+  min-height: 1.75rem;
+}
+
+.service__head h3 {
+  line-height: 1.25;
+}
+
 /* Icons with a light version swap to it in dark mode. */
 .service__icon--themed .service__icon-dark,
 :root[data-theme='dark'] .service__icon--themed .service__icon-light {
@@ -1271,50 +1418,152 @@ pre[data-language='text']::before {
   display: block;
 }
 
-.card-link:hover .service__icon {
-  transform: scale(1.06);
+
+/* Homelab cards come in pairs that fill the row, so they line up with full-width cards like Server. */
+/* Two classes, so it beats the general .cards columns further down whatever the order. */
+@media (min-width: 640px) {
+  .cards.cards--pairs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.service__icon {
-  transition: transform 0.2s ease;
+/* A card with sections of apps inside (like Server) takes a whole row. */
+.cards .cards__wide {
+  grid-column: 1 / -1;
 }
 
-/* Clickable "What's running" cards. */
-.cards li:has(.card-link) {
+.group + .group {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.group:first-child {
+  margin-top: 1.1rem;
+}
+
+.group__name {
+  margin: 0 0 0.9rem;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.apps {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  gap: 1rem 2rem;
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 
-.card-link {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 1.1rem 1.2rem;
-  border-radius: inherit;
+/* Each app is a compact link to its own website. */
+.app {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.7rem;
+  align-items: center;
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.15s;
 }
 
-.cards li:has(.card-link:hover) {
-  border-color: var(--accent);
+.app .service__icon {
+  grid-row: span 2;
 }
 
-.card-link__cue {
+a.app:hover .app__name {
+  color: var(--accent);
+}
+
+/* ---------- External link arrow ----------
+   The same arrow on every link that opens another site: muted, the accent colour on hover. */
+
+.ext-icon {
+  display: inline-block;
+  flex: none;
+  width: 0.85em;
+  height: 0.85em;
+  vertical-align: -0.05em;
+  color: var(--muted);
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+a:hover > .ext-icon,
+a:focus-visible > .ext-icon,
+a:hover .app__name .ext-icon,
+a:focus-visible .app__name .ext-icon {
+  color: var(--accent);
+  transform: translate(1px, -1px);
+}
+
+.app__name .ext-icon {
+  margin-left: 0.3em;
+}
+
+.button .ext-icon {
+  margin-left: 0.45em;
+  color: inherit;
+}
+
+.app__name {
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.app__role {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+/* ---------- Card links ----------
+   A card's links sit together on its bottom row: the guide and the tool's own website.
+   Only the links themselves are clickable and react on hover; the card around them doesn't. */
+
+.cards > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.4rem;
   margin-top: auto;
   padding-top: 0.9rem;
-  color: var(--muted);
   font-family: var(--mono);
   font-size: 0.8rem;
 }
 
-.card-link:hover .card-link__cue,
-.card-link:hover h3 {
+.card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.card-action:hover,
+.card-action:focus-visible {
   color: var(--accent);
 }
 
-.card-link:hover .card-link__cue {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+
+
+.globe-icon {
+  flex: none;
+  width: 1em;
+  height: 1em;
 }
 
 .source-note {
@@ -1379,19 +1628,19 @@ pre[data-language='text']::before {
   padding: 0;
 }
 
-.cards li {
+.cards > li {
   padding: 1.1rem 1.2rem;
   border: 1px solid var(--rule);
   border-radius: 10px;
 }
 
-.cards h3 {
+.cards > li h3 {
   margin: 0 0 0.4rem;
   font-size: 1rem;
   font-weight: 600;
 }
 
-.cards p {
+.cards > li > p {
   margin: 0;
   color: var(--muted);
   font-size: 0.95em;
@@ -1436,7 +1685,7 @@ pre[data-language='text']::before {
   font-weight: 600;
 }
 
-.timeline__what span {
+.timeline__place {
   font-weight: 400;
 }
 
