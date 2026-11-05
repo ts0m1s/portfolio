@@ -28,8 +28,11 @@ export function homelabHref(link?: string) {
   return url(`homelab/${id}/`) + (hash ? `#${hash}` : '');
 }
 
-/** 2026-10-01 */
-export const formatDate = (date: Date) => date.toISOString().slice(0, 10);
+/** Day, month, year: "27 Oct 2026". The month as a word, so it can't be misread either way round. */
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const formatDate = (date: Date) =>
+  `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 
 export const readingTime = (body = '') => {
   const words = body.split(/\s+/).filter(Boolean).length;
