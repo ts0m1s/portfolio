@@ -1,21 +1,58 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
-import { SITE } from '../config';
+import ServiceIcon from '../components/ServiceIcon.astro';
+import { CONTENT, HOMELAB, SITE } from '../config';
+import { edit, editItem, editList } from '../edit/attrs';
 import { getPosts, url } from '../utils';
 
 const posts = await getPosts();
 const recent = posts.slice(0, 8);
+const home = CONTENT.home;
+
+// Every app with a logo on the Homelab page, in the order they appear there.
+const apps = HOMELAB.services.flatMap((service) => [
+  ...(service.icon && service.icon !== 'server' ? [{ name: service.name, icon: service.icon }] : []),
+  ...(service.groups ?? []).flatMap((group) => group.apps.filter((app) => app.icon)),
+]);
 ---
 
 <Base>
   <section class="intro">
-    <h1 class="display">{SITE.tagline}</h1>
-    <p class="lede">{SITE.intro}</p>
+    <h1 class="display" {...edit('site.tagline')}>{SITE.tagline}</h1>
+    <p class="lede" {...edit('site.intro')}>{SITE.intro}</p>
+  </section>
+
+  <!-- What I'm up to now, as a tiny terminal session. On a first visit scripts/home-terminal.ts
+       types the command out and prints the lines; otherwise it's shown as is. -->
+  <section class="now term" aria-label="What I'm doing now">
+    <p class="now__cmd" data-step="cmd"><span class="now__sign" aria-hidden="true">$</span> <span class="term__typed" {...edit('home.nowCommand')}>{home.nowCommand}</span></p>
+    <dl class="now__list" {...editList('home.now', { label: 'doing', text: 'something new' })}>
+      {home.now.map(({ label, text }, i) => (
+        <div class="now__row" data-step="row" {...editItem(i)}>
+          <dt {...edit(`home.now.${i}.label`)}>{label}</dt>
+          <dd {...edit(`home.now.${i}.text`)}>{text}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <!-- One line with the homelab's logos, linking to the Homelab page. -->
+  <section class="lab-strip" aria-label="My homelab">
+    <span class="lab-strip__label" {...edit('home.homelabLabel')}>{home.homelabLabel}</span>
+    <ul class="lab-strip__icons">
+      {apps.map(({ name, icon }) => (
+        <li title={name}>
+          <ServiceIcon name={icon} />
+          <span class="visually-hidden">{name}</span>
+        </li>
+      ))}
+    </ul>
+    <a class="lab-strip__link" href={url('homelab/')} {...edit('home.homelabLink')}>{home.homelabLink}</a>
   </section>
 
   <section class="recent">
-    <h2>Recent posts</h2>
+    <h2 {...edit('home.recentHeading')}>{home.recentHeading}</h2>
     <PostList posts={recent} showDescription />
     {posts.length > recent.length && <a class="more" href={url('writing/')}>See all {posts.length} posts</a>}
   </section>

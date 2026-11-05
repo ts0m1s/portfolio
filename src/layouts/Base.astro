@@ -47,6 +47,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
             document.documentElement.classList.add('intro');
             sessionStorage.setItem('intro', '1');
           }
+          // The home page terminal types itself out once per visit; hide its lines until it starts.
+          if (!sessionStorage.getItem('term') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('term');
+          }
           // Hide the name until it starts decrypting, so it never flashes as plain text.
           if (!sessionStorage.getItem('decrypted') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
             document.documentElement.classList.add('decrypt');
@@ -80,6 +84,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       import '../scripts/toc';
       import '../scripts/sidebar-marker';
       import '../scripts/path-typer';
+      import '../scripts/home-terminal';
       import '../scripts/decrypt';
       import '../scripts/code-copy';
       import '../scripts/image-zoom';
