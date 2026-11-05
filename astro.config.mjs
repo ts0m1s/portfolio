@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import siteEditor from './src/edit/integration.mjs';
 
 // GitHub Pages:
 // - Replace USERNAME with your GitHub username.
@@ -9,7 +10,8 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://ts0m1s.github.io',
   base: '/portfolio',
-  integrations: [sitemap()],
+  // siteEditor: edit the site's text in the browser during `npm run dev`. Not in the built site.
+  integrations: [sitemap(), siteEditor()],
   // Load pages on hover so transitions feel instant.
   prefetch: { prefetchAll: true },
   markdown: {

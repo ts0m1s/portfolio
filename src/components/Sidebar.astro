@@ -2,6 +2,7 @@
 import FileTree from './FileTree.astro';
 import SocialLinks from './SocialLinks.astro';
 import { SITE } from '../config';
+import { edit } from '../edit/attrs';
 import { url } from '../utils';
 
 const isHome = Astro.url.pathname.replace(/\/?$/, '/') === url();
@@ -12,7 +13,7 @@ const isHome = Astro.url.pathname.replace(/\/?$/, '/') === url();
   Everything you click lives here, so the rest of the page is only for reading.
 -->
 <aside class="sidebar" transition:persist="sidebar">
-  <a class="site-name" href={url()} aria-current={isHome ? 'page' : undefined}>{SITE.name}</a>
+  <a class="site-name" href={url()} {...edit('site.name')} aria-current={isHome ? 'page' : undefined}>{SITE.name}</a>
   <div class="sidebar__trunk" aria-hidden="true">{Array(80).fill('│').join('\n')}</div>
   <div class="tree-wrap">
     <FileTree />

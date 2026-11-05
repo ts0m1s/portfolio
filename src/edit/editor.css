@@ -1,0 +1,140 @@
+/* The in-page editor (dev only). */
+
+.se-toggle,
+.se-bar,
+.se-add,
+.se-remove {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+
+.se-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+  box-shadow: 0 6px 20px -10px var(--shadow);
+}
+
+.se-toggle:hover,
+.se-toggle[aria-pressed='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.se-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem 0.5rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 10px 30px -12px var(--shadow);
+  transform: translate(-50%, 150%);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.se-bar--shown {
+  transform: translate(-50%, 0);
+}
+
+.se-bar--error {
+  border-color: #c4534a;
+}
+
+.se-bar button {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.se-bar .se-bar__save {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--paper);
+}
+
+.se-bar button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Editable text gets a dashed outline while editing. */
+.se-editing [data-edit] {
+  outline: 1px dashed var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+  cursor: text;
+}
+
+.se-editing [data-edit]:hover {
+  background: var(--select);
+}
+
+.se-editing [data-edit]:focus {
+  outline-style: solid;
+  background: var(--select);
+}
+
+/* The name hides while it decrypts on a new visit; never hide it while editing. */
+.se-editing .site-name {
+  visibility: visible !important;
+}
+
+.se-editing [data-edit-item] {
+  position: relative;
+}
+
+.se-remove {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.se-remove:hover {
+  border-color: #c4534a;
+  color: #c4534a;
+}
+
+.se-add {
+  display: block;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  background: none;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.se-add:hover {
+  background: var(--select);
+}

@@ -1,0 +1,211 @@
+{
+  "_help": [
+    "All the short text on the site lives here.",
+    "Easiest way to edit: run `npm run dev`, open the site, press E (or click Edit at the bottom right), click any outlined text and type, then Save.",
+    "You can also edit this file by hand. Keep the quotes and commas as they are.",
+    "homelab.services: `link` makes a card open a guide (a guide id like \"pihole\", optionally with \"#section\"). `url` is the tool's own website, shown as a small ↗ on the card. `icon` is a file name in public/icons/ without .svg. `groups` turns a card into a full-width card with sections of apps inside (like Server): each group has a name and apps, and each app has a name, role, icon and url.",
+    "about.cv: put your CV in public/ (e.g. public/cv.pdf) and write its file name here (\"cv.pdf\"). Leave it empty to hide the button."
+  ],
+  "site": {
+    "name": "Dimitrios Kontoulis",
+    "tagline": "Welcome",
+    "intro": "I'm Dimitrios Kontoulis, a Computer Science student with a lot of curiousity pretty much about everything. I keep notes on topics that took me a while to understand, and write each one up the way I wish it had been explained to me, so hopefully other people also find it useful.",
+    "description": "Plain-language explainers on cybersecurity and networking, plus my homelab."
+  },
+  "home": {
+    "nowCommand": "cat now.txt",
+    "now": [
+      {
+        "label": "learning",
+        "text": "Blue Team Level 1"
+      },
+      {
+        "label": "solving",
+        "text": "Blue Team Labs Online challenges"
+      },
+      {
+        "label": "trying",
+        "text": "to maintain my server :)"
+      }
+    ],
+    "homelabLabel": "My Homelab",
+    "homelabLink": "See what's running",
+    "recentHeading": "Recent posts"
+  },
+  "writing": {
+    "title": "All posts",
+    "description": "Every explainer on cybersecurity and networking, newest first."
+  },
+  "homelab": {
+    "title": "Homelab",
+    "intro": "This section is the documentation of my homelab and generally my self-hosting journey. You can find the tools tools and services I use, how I set them up and how I kept (and still keep on) breaking it. Some could say that this has indeed become my little hobby. Always working on maintaining it and keeping it in one piece.",
+    "servicesHeading": "What's running",
+    "cardCue": "Read the setup guide",
+    "websiteLabel": "Website",
+    "services": [
+      {
+        "name": "Pi-hole",
+        "text": "Blocks ads and trackers for every device on my network, at the DNS level.",
+        "link": "pihole",
+        "icon": "pi-hole",
+        "url": "https://pi-hole.net"
+      },
+      {
+        "name": "Tailscale",
+        "text": "Private VPN, so my devices keep using Pi-hole even when I'm away from home.",
+        "link": "pihole#setup-for-tailscale-vpn-networks",
+        "icon": "tailscale",
+        "url": "https://tailscale.com"
+      },
+      {
+        "name": "Server",
+        "text": "My main machine. Everything here runs in Docker, with Traefik in front.",
+        "icon": "server",
+        "groups": [
+          {
+            "name": "Media",
+            "apps": [
+              {
+                "name": "Jellyfin",
+                "role": "streaming",
+                "icon": "jellyfin",
+                "url": "https://jellyfin.org"
+              },
+              {
+                "name": "Sonarr",
+                "role": "TV shows",
+                "icon": "sonarr",
+                "url": "https://sonarr.tv"
+              },
+              {
+                "name": "Radarr",
+                "role": "films",
+                "icon": "radarr",
+                "url": "https://radarr.video"
+              },
+              {
+                "name": "Bazarr",
+                "role": "subtitles",
+                "icon": "bazarr",
+                "url": "https://www.bazarr.media"
+              },
+              {
+                "name": "Seerr",
+                "role": "requests",
+                "icon": "seerr",
+                "url": "https://github.com/seerr-team/seerr"
+              },
+              {
+                "name": "Recyclarr",
+                "role": "quality settings",
+                "icon": "recyclarr",
+                "url": "https://recyclarr.dev"
+              }
+            ]
+          },
+          {
+            "name": "Other tools",
+            "apps": [
+              {
+                "name": "Traefik",
+                "role": "reverse proxy",
+                "icon": "traefik",
+                "url": "https://traefik.io/traefik/"
+              },
+              {
+                "name": "Homarr",
+                "role": "dashboard",
+                "icon": "homarr",
+                "url": "https://homarr.dev"
+              },
+              {
+                "name": "Immich",
+                "role": "photo backup",
+                "icon": "immich",
+                "url": "https://immich.app"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "about": {
+    "title": "About me",
+    "summary": "I'm a student focused on cybersecurity and networking. I learn by building things in my homelab, and I like taking ideas that sound intimidating and making them simple, which is why I write the explainers on this site.",
+    "cv": "",
+    "buttons": {
+      "email": "Email me",
+      "cv": "Download my CV",
+      "writing": "Read my writing"
+    },
+    "focusHeading": "What I focus on",
+    "focus": [
+      {
+        "title": "Networking and homelab",
+        "text": "Running and securing services at home: DNS filtering, VPNs and Raspberry Pi."
+      },
+      {
+        "title": "Cybersecurity",
+        "text": "Defensive security, cryptography basics and how real attacks work."
+      },
+      {
+        "title": "Explaining things clearly",
+        "text": "Turning technical topics into writing anyone can follow."
+      }
+    ],
+    "skillsHeading": "Skills",
+    "skills": [
+      {
+        "group": "Languages",
+        "items": [
+          "Python",
+          "C++",
+          "JavaScript"
+        ]
+      },
+      {
+        "group": "Security",
+        "items": [
+          "Wireshark",
+          "Nmap",
+          "Linux hardening"
+        ]
+      },
+      {
+        "group": "Homelab",
+        "items": [
+          "Raspberry Pi",
+          "Pi-hole",
+          "Tailscale"
+        ]
+      }
+    ],
+    "experienceHeading": "Experience",
+    "experience": [
+      {
+        "when": "2025 to now",
+        "what": "Role title",
+        "where": "Company or project",
+        "note": "One sentence about what you did and the result."
+      },
+      {
+        "when": "2024",
+        "what": "Role title",
+        "where": "Company or project",
+        "note": "One sentence about what you did and the result."
+      }
+    ],
+    "educationHeading": "Education",
+    "education": [
+      {
+        "when": "2023 to 2027",
+        "what": "Degree name",
+        "where": "University name",
+        "note": "Relevant courses or a thesis topic."
+      }
+    ],
+    "contactHeading": "Get in touch",
+    "contactText": "The quickest way to reach me is by email. You can also find me here:"
+  }
+}
