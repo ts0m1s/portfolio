@@ -3,8 +3,7 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import TagFilter from '../components/TagFilter.astro';
 import { CONTENT } from '../config';
-import { edit } from '../edit/attrs';
-import { getPosts } from '../utils';
+import { getPosts, url } from '../utils';
 
 const posts = await getPosts();
 ---
@@ -13,8 +12,13 @@ const posts = await getPosts();
   title={CONTENT.writing.title}
   description={CONTENT.writing.description}
   path={[{ label: 'Writing' }]}
+  heading={CONTENT.writing.title}
 >
-  <h1 {...edit('writing.title')}>{CONTENT.writing.title}</h1>
+  {import.meta.env.DEV && (
+    <p class="dev-write">
+      <a href={url('write/')} data-astro-reload>+ New post</a>
+    </p>
+  )}
   <TagFilter active="all" />
   <PostList posts={posts} showDescription />
 </Base>

@@ -21,7 +21,10 @@ const numberOf = (post: Post) => String(all.length - all.findIndex((p) => p.id =
       <li class="log__row">
         <span class="log__num">{numberOf(post)}</span>
         <time class="log__date" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-        <a class="log__title" href={url(`posts/${post.id}/`)}>{post.data.title}</a>
+        <a class="log__title" href={url(`posts/${post.id}/`)}>
+          {post.data.title}
+          {post.data.draft && <span class="log__draft">draft</span>}
+        </a>
         <span class="log__tags">{post.data.tags.join(', ')}</span>
         {showDescription && <p class="log__desc">{post.data.description}</p>}
       </li>

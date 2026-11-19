@@ -1,0 +1,97 @@
+---
+// The writing editor, for `npm run dev` only (added by src/edit/integration.mjs; it doesn't
+// exist in the built site). Markdown on the left, the post as it will look on the right.
+// /write starts a new post; /write/?post=<file name> edits an existing one.
+
+import '../styles/global.css';
+import './write.css';
+import { TAGS } from '../config';
+import { url } from '../utils';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      (() => {
+        let theme = null;
+        try {
+          theme = localStorage.getItem('theme');
+        } catch {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <title>Write | editor</title>
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap"
+    />
+  </head>
+  <body class="w" data-no-site-editor data-base={url()}>
+    <header class="w-bar">
+      <a class="w-back" href={url('writing/')}>← Writing</a>
+      <span class="w-mode">New post</span>
+      <span class="w-status" role="status" aria-live="polite"></span>
+      <a class="w-view" href="#" target="_blank" rel="noopener" hidden>View post</a>
+      <button type="button" class="button button--quiet w-save-draft">Save draft</button>
+      <button type="button" class="button w-publish">Publish</button>
+    </header>
+
+    <main class="w-main">
+      <section class="w-edit" aria-label="Write">
+        <label class="w-field">
+          <span>Title</span>
+          <input class="w-title" type="text" autocomplete="off" placeholder="What is a vector embedding?" />
+        </label>
+        <label class="w-field">
+          <span>Description <small>shown under the title in post lists and search results</small></span>
+          <input class="w-description" type="text" autocomplete="off" placeholder="One sentence about the post." />
+        </label>
+        <div class="w-row">
+          <label class="w-field">
+            <span>File name <small>the post's address: /posts/<em>file-name</em>/</small></span>
+            <input class="w-slug" type="text" autocomplete="off" spellcheck="false" placeholder="vector-embeddings" />
+          </label>
+          <label class="w-field w-field--date">
+            <span>Date</span>
+            <input class="w-date" type="date" />
+          </label>
+        </div>
+        <fieldset class="w-field w-tags">
+          <legend>Topic</legend>
+          {Object.entries(TAGS).map(([id, label]) => (
+            <label class="w-tag">
+              <input type="checkbox" name="tags" value={id} />
+              {label}
+            </label>
+          ))}
+        </fieldset>
+        <label class="w-field w-field--body">
+          <span>Post <small>in Markdown</small></span>
+          <textarea class="w-body" spellcheck="true" placeholder="Start writing…"></textarea>
+        </label>
+      </section>
+
+      <section class="w-preview" aria-label="Preview">
+        <p class="w-preview__label">Preview</p>
+        <header class="post-header">
+          <h1 class="w-p-title"></h1>
+          <p class="post-meta w-p-meta"></p>
+        </header>
+        <div class="prose w-p-body"></div>
+      </section>
+    </main>
+
+    <script>
+      import './write.ts';
+    </script>
+  </body>
+</html>
