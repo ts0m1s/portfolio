@@ -8,10 +8,9 @@ import { edit, editItem, editList } from '../../edit/attrs';
 import { homelabHref } from '../../utils';
 ---
 
-<Base title={HOMELAB.title} description={HOMELAB.intro} path={[{ label: 'Homelab' }]}>
+<Base title={HOMELAB.title} description={HOMELAB.intro} path={[{ label: 'Homelab' }]} heading={HOMELAB.title}>
   <article class="about">
     <header class="about__intro">
-      <h1 {...edit('homelab.title')}>{HOMELAB.title}</h1>
       <p class="lede" {...edit('homelab.intro')}>{HOMELAB.intro}</p>
     </header>
 

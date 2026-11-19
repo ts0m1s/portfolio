@@ -15,9 +15,14 @@ interface Props {
   type?: 'website' | 'article';
   /** Where the page sits below /home, shown as a directory path. */
   path?: { label: string; href?: string }[];
+  /**
+   * Section pages: the path is shown large as the page's title, and this is the page's real
+   * heading for screen readers and search engines (hidden on screen, so it isn't shown twice).
+   */
+  heading?: string;
 }
 
-const { title, description = SITE.description, type = 'website', path } = Astro.props;
+const { title, description = SITE.description, type = 'website', path, heading } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE.name}` : SITE.name;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -41,21 +46,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         document.documentElement.dataset.theme = theme;
         document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#1d1814' : '#faf6f1';
 
-        // Play the sidebar intro once per visit, and never for people who prefer reduced motion.
-        try {
-          if (!sessionStorage.getItem('intro') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.classList.add('intro');
-            sessionStorage.setItem('intro', '1');
-          }
-          // The home page terminal types itself out once per visit; hide its lines until it starts.
-          if (!sessionStorage.getItem('term') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.classList.add('term');
-          }
-          // Hide the name until it starts decrypting, so it never flashes as plain text.
-          if (!sessionStorage.getItem('decrypted') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.classList.add('decrypt');
-          }
-        } catch {}
+        // The intro animations play on every full page load (opening, reloading, arriving from a
+        // link), not when moving between pages inside the site. Never with reduced motion.
+        //   intro:   the sidebar tree unfolds and the rope drops in
+        //   decrypt: hides the name until it starts decrypting, so it never flashes as plain text
+        //   term:    hides the home page terminal lines until they type out
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.classList.add('intro', 'decrypt', 'term');
+        }
       })();
     </script>
 
@@ -101,7 +99,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <Sidebar />
       <div class="content">
         <main id="main">
-          <Path segments={path} />
+          <Path segments={path} title={Boolean(heading)} />
+          {heading && <h1 class="visually-hidden">{heading}</h1>}
           <slot />
         </main>
         <Footer />

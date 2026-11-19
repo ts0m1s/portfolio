@@ -1,4 +1,5 @@
-// Your name in the sidebar starts scrambled and resolves left to right. Plays once per visit.
+// Your name in the sidebar starts scrambled and resolves left to right, on every full page load
+// (Base.astro adds the `decrypt` class then).
 
 const GLYPHS = '!<>-_/[]{}=+*^?#$%&0123456789';
 const DURATION = 1100;
@@ -6,14 +7,6 @@ const FRAME = 45;
 const FONT_WAIT = 800;
 
 const root = document.documentElement;
-
-const hasPlayed = () => {
-  try {
-    return sessionStorage.getItem('decrypted') === '1';
-  } catch {
-    return true;
-  }
-};
 
 const random = () => GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
 
@@ -86,17 +79,13 @@ const decrypt = (name: HTMLElement) => {
 document.addEventListener(
   'astro:page-load',
   async () => {
-    if (root.classList.contains('decrypt') && !hasPlayed()) {
+    if (root.classList.contains('decrypt')) {
       // Measure letters in the real font, not the fallback.
       await Promise.race([document.fonts.ready, new Promise((done) => setTimeout(done, FONT_WAIT))]);
 
       // Only the visible name: the sidebar on desktop, the top bar on phones.
       const names = [...document.querySelectorAll<HTMLElement>('.site-name')].filter((el) => el.offsetParent);
       names.forEach(decrypt);
-
-      try {
-        sessionStorage.setItem('decrypted', '1');
-      } catch {}
     }
     root.classList.remove('decrypt');
   },

@@ -795,8 +795,6 @@ html.term .term [data-step].is-shown {
   }
 }
 
-
-
 .now__sign {
   color: var(--phosphor);
   font-weight: 600;
@@ -978,6 +976,32 @@ html.term .term [data-step].is-shown {
   }
 }
 
+.log__draft {
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px dashed var(--muted);
+  border-radius: 4px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  vertical-align: 0.1em;
+}
+
+/* Links to the writing editor. Only rendered during `npm run dev`. */
+.dev-write {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.dev-write .log__draft {
+  margin-left: 0;
+}
+
 /* ---------- Topic filter ---------- */
 
 .filter {
@@ -1034,6 +1058,22 @@ html.term .term [data-step].is-shown {
 
 .path__segment[hidden] {
   display: none;
+}
+
+/* On section pages the path is the title: as large as other page titles, with the parent
+   folders softer so the section's name is what stands out. */
+.path--title {
+  margin-bottom: 1.25rem;
+  color: var(--muted);
+  font-size: clamp(1.6rem, 1.35rem + 0.6vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.path--title [aria-current='page'],
+.path--title .path__typing {
+  color: var(--ink);
 }
 
 .path__typing {
@@ -1418,7 +1458,6 @@ pre[data-language='text']::before {
   display: block;
 }
 
-
 /* Homelab cards come in pairs that fill the row, so they line up with full-width cards like Server. */
 /* Two classes, so it beats the general .cards columns further down whatever the order. */
 @media (min-width: 640px) {
@@ -1533,7 +1572,6 @@ a:focus-visible .app__name .ext-icon {
   flex-direction: column;
 }
 
-
 .card-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1545,20 +1583,27 @@ a:focus-visible .app__name .ext-icon {
   font-size: 0.8rem;
 }
 
+/* In the accent colour, like links in text, so they stand out from the card's description.
+   On hover they switch to the text colour, the same way text links do. */
 .card-action {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  color: var(--muted);
+  color: var(--accent);
   text-decoration: none;
 }
 
 .card-action:hover,
 .card-action:focus-visible {
-  color: var(--accent);
+  color: var(--ink);
 }
 
-
+/* The globe and the arrow take the link's colour, so each link reads as one piece. */
+.card-action .ext-icon,
+.card-action:hover > .ext-icon,
+.card-action:focus-visible > .ext-icon {
+  color: inherit;
+}
 
 .globe-icon {
   flex: none;
@@ -1645,61 +1690,6 @@ a:focus-visible .app__name .ext-icon {
   color: var(--muted);
   font-size: 0.95em;
   line-height: 1.55;
-}
-
-.skills {
-  margin: 0;
-  border-top: 1px solid var(--rule);
-}
-
-.skills div,
-.timeline li {
-  display: grid;
-  grid-template-columns: 9rem minmax(0, 1fr);
-  gap: 0.25rem 1.25rem;
-  padding: 0.85rem 0;
-  border-bottom: 1px solid var(--rule);
-}
-
-.skills dt,
-.timeline__when {
-  padding-top: 0.15rem;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 0.82rem;
-}
-
-.skills dd {
-  margin: 0;
-}
-
-.timeline {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--rule);
-}
-
-.timeline__what {
-  margin: 0;
-  font-weight: 600;
-}
-
-.timeline__place {
-  font-weight: 400;
-}
-
-.timeline__note {
-  margin: 0.2rem 0 0;
-  color: var(--muted);
-  font-size: 0.95em;
-}
-
-@media (max-width: 600px) {
-  .skills div,
-  .timeline li {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ---------- Decrypting name ---------- */

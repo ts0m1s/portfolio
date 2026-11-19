@@ -4,14 +4,16 @@ import { url } from '../utils';
 interface Props {
   /** Where the page sits below /home. The last segment is the current page. */
   segments?: { label: string; href?: string }[];
+  /** Show it large, as the page's title (section pages like Writing and Homelab). */
+  title?: boolean;
 }
 
-const { segments = [] } = Astro.props;
+const { segments = [], title = false } = Astro.props;
 const all = [{ label: 'home', href: url() }, ...segments];
 ---
 
 <!-- The page's location, written like a directory. Changing page types it like `cd` (scripts/path-typer.ts). -->
-<nav class="path" aria-label="You are here">
+<nav class:list={['path', { 'path--title': title }]} aria-label="You are here">
   {all.map(({ label, href }, i) => (
     <span class="path__segment" data-segment={label}>
       <span class="path__sep" aria-hidden="true">/</span>

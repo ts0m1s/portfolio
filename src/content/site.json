@@ -9,7 +9,7 @@
   "site": {
     "name": "Dimitrios Kontoulis",
     "tagline": "Welcome",
-    "intro": "I'm Dimitrios Kontoulis, a Computer Science student with a lot of curiousity pretty much about everything. I keep notes on topics that took me a while to understand, and write each one up the way I wish it had been explained to me, so hopefully other people also find it useful.",
+    "intro": "I'm Dimitrios Kontoulis, a Computer Science student with a lot of curiousity pretty much about everything. I keep notes on topics that took me a while to understand, and write each one up the way I wish it had been explained to me, so hopefully other people also find it useful. I also have a homelab that I am continuously building and trying not to break, but at least I am learning :)",
     "description": "Plain-language explainers on cybersecurity and networking, plus my homelab."
   },
   "home": {
@@ -17,7 +17,7 @@
     "now": [
       {
         "label": "learning",
-        "text": "Blue Team Level 1"
+        "text": "Blue Team Level 1 - Introductory Courses"
       },
       {
         "label": "solving",
@@ -67,7 +67,7 @@
             "apps": [
               {
                 "name": "Jellyfin",
-                "role": "streaming",
+                "role": "streaming frontend",
                 "icon": "jellyfin",
                 "url": "https://jellyfin.org"
               },
@@ -104,23 +104,23 @@
             ]
           },
           {
-            "name": "Other tools",
+            "name": "Other tools/services",
             "apps": [
               {
                 "name": "Traefik",
-                "role": "reverse proxy",
+                "role": "reverse proxy so I don't have to memorize IP addresses",
                 "icon": "traefik",
                 "url": "https://traefik.io/traefik/"
               },
               {
                 "name": "Homarr",
-                "role": "dashboard",
+                "role": "dashboard (to monitor the chaos)",
                 "icon": "homarr",
                 "url": "https://homarr.dev"
               },
               {
                 "name": "Immich",
-                "role": "photo backup",
+                "role": "Private, self-hosted Google Photos alternative with identical look and feel",
                 "icon": "immich",
                 "url": "https://immich.app"
               }
@@ -152,57 +152,6 @@
       {
         "title": "Explaining things clearly",
         "text": "Turning technical topics into writing anyone can follow."
-      }
-    ],
-    "skillsHeading": "Skills",
-    "skills": [
-      {
-        "group": "Languages",
-        "items": [
-          "Python",
-          "C++",
-          "JavaScript"
-        ]
-      },
-      {
-        "group": "Security",
-        "items": [
-          "Wireshark",
-          "Nmap",
-          "Linux hardening"
-        ]
-      },
-      {
-        "group": "Homelab",
-        "items": [
-          "Raspberry Pi",
-          "Pi-hole",
-          "Tailscale"
-        ]
-      }
-    ],
-    "experienceHeading": "Experience",
-    "experience": [
-      {
-        "when": "2025 to now",
-        "what": "Role title",
-        "where": "Company or project",
-        "note": "One sentence about what you did and the result."
-      },
-      {
-        "when": "2024",
-        "what": "Role title",
-        "where": "Company or project",
-        "note": "One sentence about what you did and the result."
-      }
-    ],
-    "educationHeading": "Education",
-    "education": [
-      {
-        "when": "2023 to 2027",
-        "what": "Degree name",
-        "where": "University name",
-        "note": "Relevant courses or a thesis topic."
       }
     ],
     "contactHeading": "Get in touch",

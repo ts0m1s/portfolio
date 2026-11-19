@@ -10,17 +10,16 @@ import { url } from '../utils';
 const about = CONTENT.about;
 const cv = about.cv ? url(about.cv) : '';
 const email = SOCIALS.find(({ name }) => name === 'email')?.url;
-const newRow = { when: 'Year', what: 'Title', where: 'Place', note: 'One sentence about it.' };
 ---
 
 <Base
   title={about.title}
-  description={`About ${SITE.name}: background, skills and how to get in touch.`}
+  description={`About ${SITE.name}: background, interests and how to get in touch.`}
   path={[{ label: 'About me' }]}
+  heading={about.title}
 >
   <article class="about">
     <header class="about__intro">
-      <h1 {...edit('about.title')}>{about.title}</h1>
       <p class="lede" {...edit('about.summary')}>{about.summary}</p>
       <div class="about__actions">
         {email && <a class="button" href={email} {...edit('about.buttons.email')}>{about.buttons.email}</a>}
@@ -40,38 +39,6 @@ const newRow = { when: 'Year', what: 'Title', where: 'Place', note: 'One sentenc
         ))}
       </ul>
     </section>
-
-    <section>
-      <h2 {...edit('about.skillsHeading')}>{about.skillsHeading}</h2>
-      <dl class="skills" {...editList('about.skills', { group: 'Group', items: ['Skill', 'Another skill'] })}>
-        {about.skills.map(({ group, items }, i) => (
-          <div {...editItem(i)}>
-            <dt {...edit(`about.skills.${i}.group`)}>{group}</dt>
-            <dd {...edit(`about.skills.${i}.items`, 'list')}>{items.join(', ')}</dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-
-    {(['experience', 'education'] as const).map((key) => (
-      <section>
-        <h2 {...edit(`about.${key}Heading`)}>{about[`${key}Heading`]}</h2>
-        <ol class="timeline" {...editList(`about.${key}`, newRow)}>
-          {about[key].map(({ when, what, where, note }, i) => (
-            <li {...editItem(i)}>
-              <span class="timeline__when" {...edit(`about.${key}.${i}.when`)}>{when}</span>
-              <div>
-                <p class="timeline__what">
-                  <span class="timeline__role" {...edit(`about.${key}.${i}.what`)}>{what}</span>,{' '}
-                  <span class="timeline__place" {...edit(`about.${key}.${i}.where`)}>{where}</span>
-                </p>
-                <p class="timeline__note" {...edit(`about.${key}.${i}.note`)}>{note}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-    ))}
 
     <section>
       <h2 {...edit('about.contactHeading')}>{about.contactHeading}</h2>
